@@ -20,18 +20,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
 
-@WebServlet("/UploadServlet")
+@WebServlet("/UploadServletERR")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
                  maxFileSize = 1024 * 1024 * 10, // 10MB
                  maxRequestSize = 1024 * 1024 * 50) // 50MB
-public class UploadServlet extends HttpServlet {
+public class UploadServletERR extends HttpServlet {
 
   	private static final long serialVersionUID = 1L;
 
 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     
     // Obtém o arquivo enviado pelo usuário
-    Part filePart = request.getPart("file");
+    Part filePart = request.getPart("fileERR");
     
     // Obtém o nome do arquivo
     String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
@@ -74,7 +74,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
         }
         
         //Preparar instrução SQL
-        String sql = "INSERT INTO AG_CASSI_DEV (CONTEUDO, DATA_DEV, PROC) VALUES (?,?,?)";
+        String sql = "INSERT INTO AG_CASSI_ERR (CONTEUDO, DATA_ERR) VALUES (?,?)";
         PreparedStatement pstmt = con.prepareStatement(sql);
         
         //Ler e inserir cada linha do arquivo
@@ -84,17 +84,11 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
         	pstmt.setString(1, data[0]); //Define o valor do primeiro parâmetro
         	
         	//Inserir data atual no 2 parametro
-//        	SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-//        	String currentDate = dateFormat.format(new Date());
         	LocalDate today = LocalDate.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String todayString = today.format(formatter);
             pstmt.setString(2, todayString);
-  //      	pstmt.setString(2, currentDate); 
-        	
-        	//Inserir "S" no campo PROC
-        	String PROC = "S";
-        	pstmt.setString(3, PROC); 
+ 
         	
         	// Executa a declaração SQL
         	pstmt.executeUpdate(); 
@@ -106,7 +100,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
         con.close();
         br.close();
         
-        System.out.println("Dados do arquivo .DVL inseridos na tabela com sucesso!");
+        System.out.println("Dados do arquivo .ERR inseridos na tabela com sucesso!");
         
     } catch (ClassNotFoundException e) {
       System.out.println("Não foi possível encontrar o driver JDBC do Oracle.");
